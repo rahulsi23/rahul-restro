@@ -133,9 +133,9 @@ async function bootstrap() {
   }
 
   const port = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 4001;
-  await app.listen(port);
+  await app.listen(port, '127.0.0.1');
   console.log(
-    `Nodedr OrderRestro API listening on :${port} (docs at /api/docs)`,
+    `Nodedr OrderRestro API listening on 127.0.0.1:${port} (docs at /api/docs)`,
   );
 }
 void bootstrap();

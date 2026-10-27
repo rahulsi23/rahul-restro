@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
@@ -19,7 +18,7 @@ try {
   console.warn('Asset copy warning:', e.message);
 }
 
-// 1. Start Backend
+// 1. Start NestJS Backend on 127.0.0.1
 const backendEnv = {
   ...process.env,
   PORT: String(BACKEND_PORT),
@@ -27,7 +26,7 @@ const backendEnv = {
   NODE_ENV: 'production',
 };
 
-console.log('Starting NestJS Backend on port', BACKEND_PORT, '...');
+console.log('Starting NestJS Backend on 127.0.0.1:' + BACKEND_PORT + '...');
 const backend = spawn('node', ['apps/backend/dist/src/main.js'], {
   env: backendEnv,
   stdio: 'inherit',
@@ -42,60 +41,40 @@ backend.on('exit', (code) => {
   process.exit(code || 1);
 });
 
-// 2. Poll Backend until it responds
-function checkBackend(retries = 30) {
-  if (retries <= 0) {
-    console.log('Backend polling timed out. Starting Next.js web frontend anyway...');
-    startWeb();
-    return;
-  }
+// 2. Start Next.js Frontend immediately on 0.0.0.0:PORT
+console.log(`Starting Next.js Web Frontend on 0.0.0.0:${PORT}...`);
+const webEnv = {
+  ...process.env,
+  PORT: String(PORT),
+  HOSTNAME: '0.0.0.0',
+  NODE_ENV: 'production',
+  BACKEND_URL: `http://127.0.0.1:${BACKEND_PORT}`,
+};
 
-  const req = http.get(`http://127.0.0.1:${BACKEND_PORT}/api/docs`, (res) => {
-    console.log(`Backend responded with status ${res.statusCode}. Starting Web Frontend...`);
-    startWeb();
-  });
+const serverJs = path.join(__dirname, 'apps', 'web', '.next', 'standalone', 'apps', 'web', 'server.js');
+console.log('Server file:', serverJs);
 
-  req.on('error', () => {
-    setTimeout(() => checkBackend(retries - 1), 1000);
-  });
-}
+const web = spawn('node', [serverJs], {
+  env: webEnv,
+  stdio: 'inherit',
+});
 
-// 3. Start Next.js Frontend using standalone server
-function startWeb() {
-  console.log(`Starting Next.js Web Frontend on port ${PORT}...`);
-  const webEnv = {
-    ...process.env,
-    PORT: String(PORT),
-    NODE_ENV: 'production',
-    BACKEND_URL: `http://localhost:${BACKEND_PORT}`,
-  };
+web.on('error', (err) => {
+  console.error('Web process error:', err);
+});
 
-  const serverJs = path.join(__dirname, 'apps', 'web', '.next', 'standalone', 'apps', 'web', 'server.js');
-  console.log('Server file:', serverJs);
-
-  const web = spawn('node', [serverJs], {
-    env: webEnv,
-    stdio: 'inherit',
-  });
-
-  web.on('error', (err) => {
-    console.error('Web process error:', err);
-  });
-
-  web.on('exit', (code) => {
-    console.error(`Web process exited with code ${code}`);
-    process.exit(code || 1);
-  });
-}
-
-// Start backend check
-setTimeout(() => checkBackend(), 1500);
+web.on('exit', (code) => {
+  console.error(`Web process exited with code ${code}`);
+  process.exit(code || 1);
+});
 
 process.on('SIGINT', () => {
   backend.kill();
+  web.kill();
   process.exit(0);
 });
 process.on('SIGTERM', () => {
   backend.kill();
+  web.kill();
   process.exit(0);
 });
