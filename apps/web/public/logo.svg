@@ -1,0 +1,18 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="122" fill="url(#bg)" stroke="url(#gold)" stroke-width="6"/>
+  <circle cx="128" cy="128" r="112" fill="none" stroke="rgba(251, 191, 36, 0.35)" stroke-width="2" stroke-dasharray="4,4"/>
+  <text x="128" y="112" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="62" fill="url(#gold)" text-anchor="middle" letter-spacing="4">RR</text>
+  <line x1="70" y1="130" x2="186" y2="130" stroke="url(#gold)" stroke-width="3" stroke-linecap="round"/>
+  <text x="128" y="160" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="22" fill="#ffffff" text-anchor="middle" letter-spacing="3">RAHUL</text>
+  <text x="128" y="182" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-size="13" fill="#cbd5e1" text-anchor="middle" letter-spacing="5">RESTRO</text>
+</svg>
