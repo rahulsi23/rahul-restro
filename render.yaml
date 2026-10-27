@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: rahul-restro
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: pnpm install && pnpm --filter @nodedr-restaurant/types build && pnpm --filter @nodedr-restaurant/backend exec prisma generate && pnpm --filter @nodedr-restaurant/backend build && pnpm --filter web build && node scripts/prepare-standalone.js
+    startCommand: node start-render.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BACKEND_PORT
+        value: 4001
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: postgresql://rahul:Puh5m1Uams1SlSOvL1PJcJKVw15MXtjs@dpg-dbg40havcj2c73b3l6lg-a.oregon-postgres.render.com/orderrestro?sslmode=require

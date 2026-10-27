@@ -107,7 +107,7 @@ async function bootstrap() {
   );
   app.use(cookieParser());
   app.enableCors({
-    origin: process.env.CORS_ORIGIN ?? 'http://localhost:1995',
+    origin: true,
     credentials: true,
   });
   app.setGlobalPrefix('api');
@@ -132,7 +132,7 @@ async function bootstrap() {
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  const port = process.env.PORT ?? 4000;
+  const port = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 4001;
   await app.listen(port);
   console.log(
     `Nodedr OrderRestro API listening on :${port} (docs at /api/docs)`,
